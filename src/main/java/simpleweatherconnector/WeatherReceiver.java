@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 public class WeatherReceiver {
-    String weatherurl;
+    private String weatherurl;
 
     public void WeatherReceiver() {
     		weatherurl= "http://api.openweathermap.org/data/2.5/weather?q=Noida,in&appid=d65196a1f5545b774786d4a1455b9ae8";
@@ -36,17 +37,33 @@ public class WeatherReceiver {
         return sb.toString();
       }
     
-    public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
-        InputStream is = new URL(url).openStream();
-        try {
-          BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-          String jsonText = readAll(rd);
-          JSONObject json = new JSONObject(jsonText);
-          return json;
-        } finally {
-          is.close();
+    public static JSONObject readJsonFromUrl(String url) {
+	        InputStream is = null;
+	        BufferedReader rd;
+	        String jsonText = "";
+	        JSONObject json = null;
+
+			try {
+				is = new URL(url).openStream();
+				rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+		        jsonText = readAll(rd);
+		        json = new JSONObject(jsonText);
+			} catch (MalformedURLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				try {
+	        	  		is.close();
+	          	} catch (IOException e) {
+	          		// TODO Auto-generated catch block
+	          		e.printStackTrace();
+	          	}
+			}
+        		return json;
         }
-      }
     public String GetData() throws IOException {
     		String retValue = "";
     		try {
